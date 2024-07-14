@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,6 +20,17 @@ func GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, users)
 }
 
+func GetUser(c echo.Context) error {
+	user := models.User{}
+	db := utilities.EstablishConnection()
+	defer db.Close()
+	id, err := strconv.Atoi(c.Param("id"))
+	utilities.ErrorHanler(err)
+	err = services.GetUser(id, &user, db)
+	utilities.ErrorHanler(err)
+	return c.JSON(http.StatusAccepted, user)
+}
+
 func CreateUser(c echo.Context) error {
 	user := new(models.User)
 	response := new(models.Response)
@@ -33,6 +45,7 @@ func CreateUser(c echo.Context) error {
 	userId, err := services.CreateUser(user, db)
 	if err != nil {
 		response.Message = "Unable to create the user"
+		fmt.Println(user)
 	} else {
 		response.Message = "User " + strconv.Itoa(userId) + " Created Successfully"
 	}
