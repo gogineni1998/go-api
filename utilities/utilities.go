@@ -8,20 +8,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func ErrorHanler(err error) {
+func EstablishConnection() *sql.DB {
+	db, err := sql.Open("postgres", "postgres://root:root@34.135.121.3:5432/test_db?sslmode=disable")
 	if err != nil {
 		log.Println(err)
 	}
-}
-func EstablishConnection() *sql.DB {
-	db, err := sql.Open("postgres", "postgres://root:root@localhost:5432/test_db?sslmode=disable")
-	ErrorHanler(err)
-	ErrorHanler(db.Ping())
+	err = db.Ping()
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Println("Connection Established Successfullty.....")
 	return db
 }
 
-func CreateTable() {
+func CreateTable() string {
 	db := EstablishConnection()
 	createTableSQL := `
 	CREATE TABLE IF NOT EXISTS users (
@@ -34,5 +34,5 @@ func CreateTable() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	return "Created Successfully"
 }

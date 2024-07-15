@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -25,10 +24,14 @@ func GetUser(c echo.Context) error {
 	db := utilities.EstablishConnection()
 	defer db.Close()
 	id, err := strconv.Atoi(c.Param("id"))
-	utilities.ErrorHanler(err)
+	if err != nil {
+		log.Println(err)
+	}
 	err = services.GetUser(id, &user, db)
-	utilities.ErrorHanler(err)
-	return c.JSON(http.StatusAccepted, user)
+	if err != nil {
+		log.Println(err)
+	}
+	return c.JSON(http.StatusOK, user)
 }
 
 func CreateUser(c echo.Context) error {
@@ -45,11 +48,11 @@ func CreateUser(c echo.Context) error {
 	userId, err := services.CreateUser(user, db)
 	if err != nil {
 		response.Message = "Unable to create the user"
-		fmt.Println(user)
+		return c.JSON(http.StatusBadRequest, response)
 	} else {
 		response.Message = "User " + strconv.Itoa(userId) + " Created Successfully"
 	}
-	return c.JSON(http.StatusCreated, response)
+	return c.JSON(http.StatusOK, response)
 }
 
 func UpdateUser(c echo.Context) error {
@@ -63,11 +66,9 @@ func UpdateUser(c echo.Context) error {
 	}
 	db := utilities.EstablishConnection()
 	defer db.Close()
-	id, err := services.UpdateUser(user, db)
-	utilities.ErrorHanler(err)
-	if id == 0 {
-		response.Message = "unable to update"
-		return c.JSON(http.StatusConflict, response)
+	_, err = services.UpdateUser(user, db)
+	if err != nil {
+		log.Println(err)
 	}
 	response.Message = "updated successfully"
 	return c.JSON(http.StatusAccepted, response)
@@ -78,12 +79,12 @@ func DeleteUser(c echo.Context) error {
 	db := utilities.EstablishConnection()
 	defer db.Close()
 	id, err := strconv.Atoi(c.Param("id"))
-	utilities.ErrorHanler(err)
-	count, err := services.DeleteUser(id, db)
-	utilities.ErrorHanler(err)
-	if count == 0 {
-		response.Message = "unable to deleate"
-		return c.JSON(http.StatusBadRequest, response)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = services.DeleteUser(id, db)
+	if err != nil {
+		log.Println(err)
 	}
 	response.Message = "deleated successfully"
 	return c.JSON(http.StatusAccepted, response)
