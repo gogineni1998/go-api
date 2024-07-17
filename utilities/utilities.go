@@ -9,7 +9,7 @@ import (
 )
 
 func EstablishConnection() *sql.DB {
-	db, err := sql.Open("postgres", "postgres://root:root@34.135.121.3:5432/test_db?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://root:root@34.132.253.18:5432/test_db?sslmode=disable")
 	if err != nil {
 		log.Println(err)
 	}
