@@ -78,6 +78,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          description: User with id or username dosen't exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
     delete:
       summary: Delete user
       description: Delete a user by ID
@@ -88,6 +94,12 @@ paths:
             application/json:
               schema:
                 type: string
+        '400':
+          description: User with id dosen't exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
 components:
   schemas:
     User:

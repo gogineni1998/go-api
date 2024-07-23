@@ -8,6 +8,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var DB_Connection *sql.DB
+
+func init() {
+	DB_Connection = EstablishConnection()
+}
+
 func EstablishConnection() *sql.DB {
 	db, err := sql.Open("postgres", "postgres://root:root@localhost:5432/test_db?sslmode=disable")
 	if err != nil {
@@ -22,7 +28,6 @@ func EstablishConnection() *sql.DB {
 }
 
 func CreateTable() string {
-	db := EstablishConnection()
 	createTableSQL := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INT PRIMARY KEY,
@@ -30,9 +35,13 @@ func CreateTable() string {
 		email VARCHAR(100) NOT NULL,
 		summary VarCHAR(100) NOT NULL
 	);`
-	_, err := db.Exec(createTableSQL)
+	_, err := DB_Connection.Exec(createTableSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return "Created Successfully"
+}
+
+func CloseConnection() {
+	DB_Connection.Close()
 }

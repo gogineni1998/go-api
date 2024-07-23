@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	"github.com/gogineni1998/go-api/routes"
+	"github.com/gogineni1998/go-api/utilities"
 )
 
 func main() {
+	defer utilities.CloseConnection()
 	e := routes.Routes()
 	err := e.Start("0.0.0.0:8081")
 	if err != nil {
